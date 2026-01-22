@@ -25,12 +25,7 @@ wheels/
 .installed.cfg
 *.egg
 
-# Flask
-instance/
-.webassets-cache
 
-# Flask-Session
-flask_session/
 
 # Database
 *.db
