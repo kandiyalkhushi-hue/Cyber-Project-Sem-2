@@ -1,0 +1,35 @@
+body {
+  background-color: #f7f9fc;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+}
+
+.signup-container {
+  box-shadow: 0 4px 10px rgb(0 0 0 / 0.1);
+}
+
+.captcha-image {
+  max-width: 100%;
+  height: 50px;
+  user-select: none;
+}
+
+input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 6px #007bffaa;
+  outline: none;
+}
+
+.btn-primary {
+  background-color: #0056b3;
+  border: none;
+}
+
+.btn-primary:hover {
+  background-color: #004085;
+}
+
+.form-text {
+  font-size: 0.875rem;
+  color: #6c757d;
+}

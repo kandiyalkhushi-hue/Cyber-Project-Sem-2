@@ -1,0 +1,238 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+/* =====================================
+   ATTENDANCE PAGE DESIGN
+===================================== */
+.attendance-wrapper {
+    max-width: 480px;
+    margin: auto;
+}
+
+.cyber-card {
+    background: rgba(0, 0, 0, 0.48);
+    border: 1px solid rgba(0, 255, 136, 0.35);
+    border-radius: 18px;
+    padding: 38px;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 0 28px rgba(0,255,136,0.20);
+    animation: fadeIn 0.5s ease-out;
+    margin-top: 30px;
+}
+
+.cyber-title {
+    text-align: center;
+    font-size: 30px;
+    font-weight: 600;
+    color: #00ff88;
+    text-shadow: 0 0 15px #00ff88;
+    margin-bottom: 25px;
+}
+
+.form-label {
+    color: #00ff88;
+    font-weight: 500;
+}
+
+.cyber-input {
+    background: rgba(0,0,0,0.45);
+    border: 1px solid #00ff88;
+    border-radius: 10px;
+    padding: 10px 12px;
+    color: white;
+    transition: 0.3s ease;
+}
+
+.cyber-input:focus {
+    border-color: #00ffaa;
+    box-shadow: 0 0 15px #00ff88;
+}
+
+.captcha-box {
+    border: 1px dashed #00ff88;
+    padding: 12px;
+    border-radius: 12px;
+    text-align: center;
+    margin-bottom: 12px;
+    color: #00ffaa;
+    font-size: 22px;
+    letter-spacing: 4px;
+    font-family: monospace;
+    text-shadow: 0 0 8px #00ff88;
+}
+
+.cyber-btn {
+    background: rgba(0,255,136,0.25);
+    border: 1px solid #00ff88;
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    color: #00ff88;
+    font-weight: 700;
+    font-size: 18px;
+    transition: 0.3s ease;
+    letter-spacing: 1px;
+}
+
+.cyber-btn:hover {
+    background: #00ff88;
+    color: black;
+    box-shadow: 0 0 25px #00ff88;
+    transform: translateY(-2px);
+}
+
+.cyber-btn-secondary {
+    background: rgba(0,194,255,0.25);
+    border: 1px solid #00c9ff;
+    color: #00c9ff;
+    margin-top: 12px;
+}
+
+.cyber-btn-secondary:hover {
+    background: #00c9ff;
+    color: black;
+    box-shadow: 0 0 25px #00c9ff;
+    transform: translateY(-2px);
+}
+
+.leave-card {
+    margin-top: 20px;
+    padding: 20px;
+    background: rgba(0,0,0,0.35);
+    border: 1px solid #00c9ff;
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    display: none;
+}
+
+.leave-heading {
+    color: #00c9ff;
+    font-size: 22px;
+    font-weight: 600;
+    text-shadow: 0 0 12px #00c9ff;
+    margin-bottom: 10px;
+}
+</style>
+
+
+<div class="attendance-wrapper">
+    <div class="cyber-card">
+
+        <h2 class="cyber-title">Mark Attendance</h2>
+
+        <!-- FLASH MESSAGES -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <!-- ✅ MARK PRESENT FORM -->
+        <form method="POST" action="{{ url_for('main.attendance') }}">
+
+            <input type="hidden" name="attendance" value="Present">
+
+            <!-- ✅ CAPTCHA SECTION (ALL 4 TYPES) -->
+            {% if captcha.type == "text" %}
+            <div class="mb-3">
+                <label class="form-label">Enter Captcha</label>
+                <div class="captcha-box">{{ captcha.text }}</div>
+                <input type="hidden" name="captcha_correct" value="{{ captcha.answer }}">
+                <input type="text"
+                       name="captcha_answer"
+                       class="form-control cyber-input"
+                       required autocomplete="off">
+            </div>
+
+            {% elif captcha.type == "math" %}
+            <div class="mb-3">
+                <label class="form-label">Solve Captcha</label>
+                <div class="captcha-box">{{ captcha.question }}</div>
+                <input type="hidden" name="captcha_correct" value="{{ captcha.answer }}">
+                <input type="text"
+                       name="captcha_answer"
+                       class="form-control cyber-input"
+                       required autocomplete="off">
+            </div>
+
+            {% elif captcha.type == "emoji" %}
+            <div class="mb-3">
+                <label class="form-label">
+                    Count this emoji: <strong style="font-size:24px;">{{ captcha.emoji_target }}</strong>
+                </label>
+
+                <div class="captcha-box" style="font-size:28px; letter-spacing:8px; line-height:1.8;">
+                    {% for e in captcha.emoji_grid %}
+                        {{ e }}
+                        {% if loop.index % 6 == 0 %}<br>{% endif %}
+                    {% endfor %}
+                </div>
+
+                <input type="hidden" name="captcha_correct" value="{{ captcha.answer }}">
+                <input type="number"
+                       min="0"
+                       name="captcha_answer"
+                       class="form-control cyber-input"
+                       required autocomplete="off">
+            </div>
+
+            {% elif captcha.type == "audio" %}
+            <div class="mb-3">
+                <label class="form-label">Listen and enter the digits</label>
+
+                <div class="captcha-box" style="letter-spacing:0;">
+                    <audio controls src="{{ captcha.audio_url }}" style="width:100%;"></audio>
+                </div>
+
+                <input type="hidden" name="captcha_correct" value="{{ captcha.answer }}">
+                <input type="text"
+                       name="captcha_answer"
+                       class="form-control cyber-input"
+                       required autocomplete="off">
+            </div>
+            {% endif %}
+
+            <button type="submit" class="cyber-btn">Mark Present ✅</button>
+        </form>
+
+        <!-- ✅ LEAVE BUTTON -->
+        <button class="cyber-btn cyber-btn-secondary" onclick="toggleLeaveForm()">
+            Apply for Leave 📝
+        </button>
+
+        <!-- ✅ LEAVE FORM -->
+        <div id="leaveForm" class="leave-card">
+
+            <div class="leave-heading">Leave Request</div>
+
+            <form method="POST" action="{{ url_for('main.apply_leave') }}">
+                <div class="mb-3">
+                    <label class="form-label">Reason</label>
+                    <textarea name="reason" class="form-control cyber-input" rows="3" required></textarea>
+                </div>
+
+                <button type="submit" class="cyber-btn-secondary cyber-btn">
+                    Submit Leave Request 📩
+                </button>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+<script>
+function toggleLeaveForm() {
+    const box = document.getElementById("leaveForm");
+    box.style.display = (box.style.display === "none" || box.style.display === "") 
+        ? "block" 
+        : "none";
+}
+</script>
+
+{% endblock %}

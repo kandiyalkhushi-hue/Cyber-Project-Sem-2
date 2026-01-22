@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+.dashboard-wrapper {
+    max-width: 900px;
+    margin: auto;
+}
+
+.cyber-card {
+    background: rgba(0,0,0,0.50);
+    border: 1px solid rgba(0,255,136,0.35);
+    padding: 25px;
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 0 25px rgba(0,255,136,0.18);
+    transition: 0.3s ease;
+}
+
+.cyber-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0 35px rgba(0,255,136,0.30);
+}
+
+.cyber-title {
+    text-align: center;
+    font-size: 36px;
+    font-weight: 700;
+    color: #00ff88;
+    text-shadow: 0 0 18px #00ff88;
+    margin-bottom: 30px;
+}
+
+.stat-number {
+    font-size: 35px;
+    font-weight: 700;
+    margin-top: 5px;
+    text-shadow: 0 0 12px;
+}
+
+.btn-group-custom a {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 10px;
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: 600;
+    text-align: center;
+    transition: 0.3s ease;
+}
+
+.btn-manage {
+    background: rgba(0,255,136,0.25);
+    border: 1px solid #00ff88;
+    color: #00ff88;
+}
+.btn-manage:hover {
+    background: #00ff88;
+    color: black;
+    box-shadow: 0 0 25px #00ff88;
+}
+
+.btn-attendance {
+    background: rgba(0,194,255,0.25);
+    border: 1px solid #00c9ff;
+    color: #00c9ff;
+}
+.btn-attendance:hover {
+    background: #00c9ff;
+    color: black;
+    box-shadow: 0 0 25px #00c9ff;
+}
+
+.btn-leaves {
+    background: rgba(255,194,0,0.25);
+    border: 1px solid #ffd200;
+    color: #ffd200;
+}
+.btn-leaves:hover {
+    background: #ffd200;
+    color: black;
+    box-shadow: 0 0 25px #ffd200;
+}
+
+.btn-settings {
+    background: rgba(174,0,255,0.25);
+    border: 1px solid #ae00ff;
+    color: #d392ff;
+}
+.btn-settings:hover {
+    background: #ae00ff;
+    color: black;
+    box-shadow: 0 0 25px #ae00ff;
+}
+
+.btn-logout {
+    background: rgba(255,0,0,0.20);
+    border: 1px solid red;
+    color: red;
+}
+.btn-logout:hover {
+    background: red;
+    color: black;
+    box-shadow: 0 0 25px red;
+}
+</style>
+
+<div class="dashboard-wrapper">
+
+    <h2 class="cyber-title">Admin Dashboard</h2>
+
+    <div class="row g-4">
+
+        <!-- Students -->
+        <div class="col-md-4">
+            <div class="cyber-card text-center">
+                <h5>Total Students</h5>
+                <div class="stat-number" style="color:#00ff88;">{{ users_count }}</div>
+            </div>
+        </div>
+
+        <!-- Attendance Logs -->
+        <div class="col-md-4">
+            <div class="cyber-card text-center">
+                <h5>Total Attendance Logs</h5>
+                <div class="stat-number" style="color:#00c9ff;">{{ attendance_count }}</div>
+            </div>
+        </div>
+
+        <!-- Pending Leaves -->
+        <div class="col-md-4">
+            <div class="cyber-card text-center">
+                <h5>Pending Leaves</h5>
+                <div class="stat-number" style="color:#ffd200;">{{ pending_leaves }}</div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="btn-group-custom mt-5">
+
+        <a href="{{ url_for('admin.students') }}" class="btn btn-manage">
+            Manage Students 👥
+        </a>
+
+        <a href="{{ url_for('admin.attendance') }}" class="btn btn-attendance">
+            View Attendance 🗂️
+        </a>
+
+        <a href="{{ url_for('admin.leaves') }}" class="btn btn-leaves">
+            Leave Applications 📝
+        </a>
+
+        <a href="{{ url_for('admin.settings') }}" class="btn btn-settings">
+            CAPTCHA Settings ⚙️
+        </a>
+
+        <a href="{{ url_for('admin.logout') }}" class="btn btn-logout">
+            Logout ❌
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}

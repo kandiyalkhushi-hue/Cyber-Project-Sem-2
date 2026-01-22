@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Captcha Attendance System</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: Poppins, sans-serif;
+            background: black;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        /* MATRIX CANVAS */
+        #matrix-canvas {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            background: black;
+            z-index: -3;
+        }
+
+        /* GLOW BG */
+        .cyber-glow {
+            position: fixed;
+            inset: 0;
+            z-index: -2;
+            pointer-events: none;
+            background:
+                radial-gradient(circle at 20% 20%, rgba(0,255,136,.18), transparent 60%),
+                radial-gradient(circle at 80% 30%, rgba(0,194,255,.18), transparent 60%),
+                radial-gradient(circle at 50% 90%, rgba(255,212,59,.12), transparent 70%);
+        }
+
+        /* NAVBAR */
+        .navbar {
+            background: rgba(0,0,0,0.75) !important;
+            border-bottom: 1px solid #00ff88;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 20px rgba(0,255,136,.35);
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            color: #00ff88 !important;
+            text-shadow: 0 0 12px #00ff88;
+        }
+
+        .nav-btn {
+            border-radius: 10px;
+            padding: 7px 15px;
+            margin-left: 8px;
+            border: 1px solid #00ff88;
+            color: white !important;
+            transition: 0.3s;
+        }
+
+        .nav-btn:hover {
+            background: #00ff88;
+            color: black !important;
+            box-shadow: 0 0 20px #00ff88;
+            transform: translateY(-2px);
+        }
+
+        /* MAIN CARD */
+        .container-box {
+            background: rgba(0,0,0,0.55);
+            border: 1px solid rgba(0,255,136,0.35);
+            backdrop-filter: blur(10px);
+            padding: 35px;
+            border-radius: 18px;
+            box-shadow: 0 0 25px rgba(0,255,136,0.2);
+            margin-top: 25px;
+        }
+
+        /* TEAM */
+        .team-card {
+            background: rgba(0,0,0,0.4);
+            border: 1px solid #00ff88;
+            padding: 20px;
+            border-radius: 12px;
+            transition: 0.3s ease;
+            backdrop-filter: blur(6px);
+        }
+
+        .team-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 20px #00ff88;
+        }
+
+        .team-img {
+            width: 120px;
+            height: 120px;
+            border-radius: 12px;
+            object-fit: cover;
+            border: 2px solid #00ff88;
+            box-shadow: 0 0 10px #00ff88;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- MATRIX BACKGROUND -->
+    <canvas id="matrix-canvas"></canvas>
+    <div class="cyber-glow"></div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-dark mb-4 px-3">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{{ url_for('main.home') }}">Captcha Attendance</a>
+
+            <div>
+                <!-- ✅ Admin Panel -->
+                <a href="{{ url_for('admin.dashboard') }}" class="nav-btn">Admin</a>
+
+                {% if session.get('user_id') %}
+                    <!-- ✅ Logged-in user menu -->
+                    <a href="{{ url_for('main.attendance') }}" class="nav-btn">Attendance</a>
+                    <a href="{{ url_for('main.logout') }}" class="nav-btn">Logout</a>
+                {% else %}
+                    <!-- ✅ Guest menu -->
+                    <a href="{{ url_for('main.login') }}" class="nav-btn">Login</a>
+                    <a href="{{ url_for('main.signup') }}" class="nav-btn">Signup</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- FLASH MESSAGES -->
+    <div class="container mb-3">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="container mb-5 d-flex justify-content-center">
+        <div class="container-box" style="max-width: 700px; width: 100%;">
+            {% block content %}
+                <!-- DEFAULT PAGE → Developer Cards -->
+                <h2 class="text-center mb-4" style="color:#00ff88; text-shadow:0 0 12px #00ff88;">
+                    👨‍💻 Developed By Khushi Kandiyal
+                </h2>
+
+                <div class="row g-4 justify-content-center">
+                    <!-- Member 1 -->
+                    <div class="col-md-6 d-flex justify-content-center">
+                        <div class="team-card d-flex flex-column align-items-center text-center" style="width: 100%;">
+                            <img src="{{ url_for('static', filename='images/mypic.png') }}" class="team-img mb-3">
+                            <div>
+                                <h5 style="color: #00ff88; margin-bottom: 15px;">Khushi Kandiyal</h5>
+                                <p style="font-size: 14px; line-height: 1.8;">
+                                    <strong>Roll No:</strong> 2418595<br>
+                                    <strong>ID:</strong> 24012668<br>
+                                    <strong>Email:</strong> kandiyalkhushi@gmail.com
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endblock %}
+        </div>
+    </div>
+
+    <!-- MATRIX ANIMATION -->
+    <script>
+        const canvas = document.getElementById("matrix-canvas");
+        const ctx = canvas.getContext("2d");
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener("resize", resizeCanvas);
+
+        const letters = "01ABCDEFGHIJKLMNOPQRSTUVWXYZ#$%&+=-*/";
+        const fontSize = 16;
+        let columns = Math.floor(canvas.width / fontSize);
+        let drops = Array(columns).fill(1);
+
+        function drawMatrix() {
+            ctx.fillStyle = "rgba(0,0,0,0.08)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = "#00ff88";
+            ctx.font = fontSize + "px monospace";
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = letters[Math.floor(Math.random() * letters.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+                drops[i]++;
+            }
+
+            requestAnimationFrame(drawMatrix);
+        }
+        drawMatrix();
+    </script>
+
+</body>
+</html>

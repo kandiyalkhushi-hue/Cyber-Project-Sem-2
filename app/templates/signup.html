@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+/* =====================================
+   SIGNUP PAGE DESIGN
+===================================== */
+.signup-wrapper {
+    max-width: 480px;
+    margin: auto;
+}
+
+.cyber-card {
+    background: rgba(0, 0, 0, 0.48);
+    border: 1px solid rgba(0, 255, 136, 0.35);
+    border-radius: 18px;
+    padding: 38px;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 0 28px rgba(0,255,136,0.22);
+    animation: fadeIn 0.5s ease-out;
+    margin-top: 25px;
+}
+
+.cyber-title {
+    text-align: center;
+    font-size: 32px;
+    font-weight: 600;
+    color: #00ff88;
+    text-shadow: 0 0 15px #00ff88;
+    margin-bottom: 25px;
+}
+
+.form-label {
+    color: #00ff88;
+    font-weight: 500;
+}
+
+.cyber-input {
+    background: rgba(0,0,0,0.45);
+    border: 1px solid #00ff88;
+    border-radius: 10px;
+    padding: 11px 12px;
+    color: white;
+    transition: 0.3s ease;
+    outline: none;
+}
+
+.cyber-input:focus {
+    border-color: #00ffaa;
+    box-shadow: 0 0 15px #00ff88;
+    background: rgba(0,0,0,0.65);
+}
+
+.cyber-btn {
+    background: rgba(0,255,136,0.25);
+    border: 1px solid #00ff88;
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    color: #00ff88;
+    font-weight: 700;
+    font-size: 18px;
+    transition: 0.3s ease;
+    letter-spacing: 1px;
+}
+
+.cyber-btn:hover {
+    background: #00ff88;
+    color: black;
+    box-shadow: 0 0 25px #00ff88;
+    transform: translateY(-2px);
+}
+
+.cyber-link {
+    color: #00d0ff;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.cyber-link:hover {
+    text-decoration: underline;
+}
+
+.captcha-box {
+    border: 1px dashed #00ff88;
+    padding: 12px;
+    border-radius: 12px;
+    text-align: center;
+    margin-bottom: 12px;
+    color: #00ffaa;
+    font-size: 22px;
+    letter-spacing: 4px;
+    font-family: monospace;
+    text-shadow: 0 0 8px #00ff88;
+}
+</style>
+
+
+<div class="signup-wrapper">
+    <div class="cyber-card">
+
+        <h2 class="cyber-title">Create Your Account</h2>
+
+        <!-- FLASH MESSAGES -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <form method="POST" action="{{ url_for('main.signup') }}">
+
+            <!-- Full Name -->
+            <div class="mb-3">
+                <label class="form-label">Full Name</label>
+                <input type="text" 
+                       name="name" 
+                       class="form-control cyber-input"
+                       placeholder="Enter your full name"
+                       required
+                       value="{{ form_data.name or '' }}">
+            </div>
+
+            <!-- Email -->
+            <div class="mb-3">
+                <label class="form-label">Email Address</label>
+                <input type="email" 
+                       name="email" 
+                       class="form-control cyber-input"
+                       placeholder="Enter your email"
+                       required
+                       value="{{ form_data.email or '' }}">
+            </div>
+
+            <!-- Password -->
+            <div class="mb-3">
+                <label class="form-label">Password</label>
+                <input type="password" 
+                       name="password" 
+                       class="form-control cyber-input"
+                       placeholder="Create a strong password"
+                       required>
+            </div>
+
+            <!-- ✅ 4-TYPE CAPTCHA SYSTEM -->
+            {% if captcha.type == "text" %}
+            <div class="mb-3">
+                <label class="form-label">Enter Captcha</label>
+                <div class="captcha-box">{{ captcha.text }}</div>
+                <input type="hidden" name="captcha_correct" value="{{ captcha.answer }}">
+                <input type="text"
+                       name="captcha_answer"
+                       class="form-control cyber-input"
+                       placeholder="Type captcha here"
+                       required>
+            </div>
+
+            {% elif captcha.type == "math" %}
+            <div class="mb-3">
+                <label class="form-label">Solve Captcha</label>
+                <div class="captcha-box">{{ captcha.question }}</div>
+                <input type="hidden" name="captcha_correct" value="{{ captcha.answer }}">
+                <input type="text"
+                       name="captcha_answer"
+                       class="form-control cyber-input"
+                       placeholder="Enter answer"
+                       required>
+            </div>
+
+            {% elif captcha.type == "emoji" %}
+            <div class="mb-3">
+                <label class="form-label">
+                    Count the emoji: <strong style="font-size:24px;">{{ captcha.emoji_target }}</strong>
+                </label>
+
+                <div class="captcha-box" style="font-size:28px; letter-spacing:8px; line-height:1.8;">
+                    {% for e in captcha.emoji_grid %}
+                        {{ e }}
+                        {% if loop.index % 6 == 0 %}<br>{% endif %}
+                    {% endfor %}
+                </div>
+
+                <input type="hidden" name="captcha_correct" value="{{ captcha.answer }}">
+                <input type="number"
+                       min="0"
+                       name="captcha_answer"
+                       class="form-control cyber-input"
+                       placeholder="Enter count"
+                       required>
+            </div>
+
+            {% elif captcha.type == "audio" %}
+            <div class="mb-3">
+                <label class="form-label">Listen & type what you hear</label>
+
+                <div class="captcha-box" style="letter-spacing:0;">
+                    <audio controls src="{{ captcha.audio_url }}" style="width:100%;"></audio>
+                </div>
+
+                <input type="hidden" name="captcha_correct" value="{{ captcha.answer }}">
+                <input type="text"
+                       name="captcha_answer"
+                       class="form-control cyber-input"
+                       placeholder="Enter digits you heard"
+                       required>
+            </div>
+            {% endif %}
+
+            <button type="submit" class="cyber-btn mt-3">Create Account</button>
+        </form>
+
+        <p class="mt-3 text-center">
+            Already registered?
+            <a href="{{ url_for('main.login') }}" class="cyber-link">Login here</a>
+        </p>
+
+    </div>
+</div>
+
+{% endblock %}

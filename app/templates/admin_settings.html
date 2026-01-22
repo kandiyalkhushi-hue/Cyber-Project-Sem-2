@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+.settings-wrapper {
+    max-width: 550px;
+    margin: auto;
+}
+
+.cyber-card {
+    background: rgba(0,0,0,0.45);
+    border: 1px solid rgba(0,255,136,0.35);
+    border-radius: 15px;
+    padding: 35px;
+    box-shadow: 0 0 25px rgba(0,255,136,0.18);
+    backdrop-filter: blur(12px);
+}
+
+.cyber-title {
+    text-align: center;
+    font-size: 32px;
+    font-weight: 700;
+    color: #00ff88;
+    text-shadow: 0 0 12px #00ff88;
+    margin-bottom: 25px;
+}
+
+.form-check-label {
+    color: #00ffaa;
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.form-check-input {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.save-btn {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    background: rgba(0,255,136,0.25);
+    border: 1px solid #00ff88;
+    color: #00ff88;
+    font-size: 18px;
+    font-weight: 700;
+    transition: 0.3s;
+}
+
+.save-btn:hover {
+    background: #00ff88;
+    color: black;
+    box-shadow: 0 0 20px #00ff88;
+}
+</style>
+
+<div class="settings-wrapper">
+    <div class="cyber-card">
+
+        <h2 class="cyber-title">CAPTCHA Settings</h2>
+
+        <form method="POST" action="{{ url_for('admin.settings') }}">
+
+            <!-- TEXT CAPTCHA -->
+            <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox"
+                       id="ct" name="captcha_text"
+                       {% if s.captcha_text %}checked{% endif %}>
+                <label class="form-check-label" for="ct">
+                    Enable Text CAPTCHA
+                </label>
+            </div>
+
+            <!-- MATH CAPTCHA -->
+            <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox"
+                       id="cm" name="captcha_math"
+                       {% if s.captcha_math %}checked{% endif %}>
+                <label class="form-check-label" for="cm">
+                    Enable Math CAPTCHA
+                </label>
+            </div>
+
+            <hr style="border-color:#00ff8850">
+
+            <!-- EMOJI CAPTCHA -->
+            <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox"
+                       id="ce" name="captcha_emoji"
+                       {% if s.captcha_emoji %}checked{% endif %}>
+                <label class="form-check-label" for="ce">
+                    Enable Emoji CAPTCHA
+                </label>
+            </div>
+
+            <!-- AUDIO CAPTCHA -->
+            <div class="form-check mb-2">
+                <input class="form-check-input" type="checkbox"
+                       id="ca" name="captcha_audio"
+                       {% if s.captcha_audio %}checked{% endif %}>
+                <label class="form-check-label" for="ca">
+                    Enable Audio CAPTCHA
+                </label>
+            </div>
+
+            <button class="save-btn mt-4">Save Settings</button>
+
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}

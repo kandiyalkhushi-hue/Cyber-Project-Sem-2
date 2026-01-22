@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Welcome, {{ user.name }}</h2>
+<p>Email: {{ user.email }}</p>
+
+<a href="{{ url_for('main.attendance') }}" class="btn btn-success mb-3">Mark Attendance</a>
+
+<h4>Recent Attendance</h4>
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>Date</th>
+      <th>Time In</th>
+      <th>Time Out</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for a in attendance_logs %}
+    <tr>
+      <td>{{ a.date }}</td>
+      <td>{{ a.time_in if a.time_in else '-' }}</td>
+      <td>{{ a.time_out if a.time_out else '-' }}</td>
+      <td>{{ a.status }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
