@@ -6,3 +6,9 @@ Flask-Session
 Werkzeug
 Pillow
 pyttsx3
+flask
+flask-session
+flask-migrate
+flask-sqlalchemy
+flask-bcrypt
+gunicorn
